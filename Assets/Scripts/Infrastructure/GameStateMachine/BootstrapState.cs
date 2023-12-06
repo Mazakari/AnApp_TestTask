@@ -38,7 +38,7 @@ public class BootstrapState : IState
         _services.RegisterSingle<IPersistentProgressService>(new PersistentProgressService());
         _services.RegisterSingle<IGameFactory>(new GameFactory(_services.Single<IAssets>()));
         _services.RegisterSingle<ISaveLoadService>(new SaveLoadService(_services.Single<IPersistentProgressService>(), _services.Single<IGameFactory>()));
-        _services.RegisterSingle<ILevelCellsService>(new LevelCellsService(_services.Single<IGameFactory>(), _sceneLoader));
+        _services.RegisterSingle<ILevelService>(new LevelService(_services.Single<IGameFactory>(), _sceneLoader));
         _services.RegisterSingle<IMetaResourcesService>(new MetaResources());
         _services.RegisterSingle<IShopService>(new ShopService());
         _services.RegisterSingle<ISkinsService>(new SkinsService());

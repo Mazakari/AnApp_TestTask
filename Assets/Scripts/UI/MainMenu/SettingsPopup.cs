@@ -5,12 +5,14 @@ using UnityEngine.UI;
 public class SettingsPopup : MonoBehaviour
 {
     [Header("Music")]
-    [SerializeField] private Slider _musicVolumeSlider;
     [SerializeField] private Toggle _musicToggle;
+    [SerializeField] private GameObject _musicOnImage;
+    [SerializeField] private GameObject _musicOffImage;
 
     [Header("Sounds")]
-    [SerializeField] private Slider _soundsVolumeSlider;
     [SerializeField] private Toggle _soundsToggle;
+    [SerializeField] private GameObject _soundsOnImage;
+    [SerializeField] private GameObject _soundsOffImage;
 
     private ISaveLoadService _saveLoadService;
     private VolumeControl _volumeControl;
@@ -24,8 +26,8 @@ public class SettingsPopup : MonoBehaviour
 
         SubscribeSlidersValueChangeCallbacks();
 
-        // load UI values from _audioService.VolumeControl.settings
         LoadAudioSettings();
+        InitAudioTogglesImages();
     }
 
     private void OnDisable() => 
@@ -39,48 +41,72 @@ public class SettingsPopup : MonoBehaviour
 
     private void SubscribeSlidersValueChangeCallbacks()
     {
-        _musicVolumeSlider.onValueChanged.AddListener(HandleMusicVolume);
         _musicToggle.onValueChanged.AddListener(HandleMusicToggle);
-
-        _soundsVolumeSlider.onValueChanged.AddListener(HandleSoundsVolume);
         _soundsToggle.onValueChanged.AddListener(HandleSoundsToggle);
     }
-
     private void UnsubscribeSlidersValueChangeCallbacks()
     {
-        _musicVolumeSlider.onValueChanged.RemoveAllListeners();
         _musicToggle.onValueChanged.RemoveAllListeners();
-
-        _soundsVolumeSlider.onValueChanged.RemoveAllListeners();
         _soundsToggle.onValueChanged.RemoveAllListeners();
     }
 
-    private void HandleMusicVolume(float value)
+    private void HandleMusicToggle(bool value)
     {
-        value = _musicVolumeSlider.value;
-        _volumeControl.HandleMusicSliderValueChanged(value, _musicVolumeSlider, _musicToggle);
+        HandleMusicToggleImages(value);
+
+        _volumeControl.HandleMusicToggleChanged(value, _musicToggle);
+    }
+    private void HandleMusicToggleImages(bool value)
+    {
+        try
+        {
+            TurnMusicImageOn(value);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+    }
+    private void TurnMusicImageOn(bool value)
+    {
+        _musicOffImage.SetActive(!value);
+        _musicOnImage.SetActive(value);
     }
 
-    private void HandleMusicToggle(bool value) =>
-        _volumeControl.HandleMusicToggleChanged(value, _musicVolumeSlider, _musicToggle);
-
-    private void HandleSoundsVolume(float value)
+    private void HandleSoundsToggle(bool value)
     {
-        value = _soundsVolumeSlider.value;
-        _volumeControl.HandleSoundsSliderValueChanged(value, _soundsVolumeSlider, _soundsToggle);
-    }
+        HandleSoundsToggleImages(value);
 
-    private void HandleSoundsToggle(bool value) =>
-       _volumeControl.HandleSoundsToggleChanged(value, _soundsVolumeSlider, _soundsToggle);
+        _volumeControl.HandleSoundsToggleChanged(value, _soundsToggle);
+    }
+    private void HandleSoundsToggleImages(bool value)
+    {
+        try
+        {
+            TurnSoundsImageOn(value);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+    }
+    private void TurnSoundsImageOn(bool value)
+    {
+        _soundsOffImage.SetActive(!value);
+        _soundsOnImage.SetActive(value);
+    }
 
     private void LoadAudioSettings()
     {
-        _musicVolumeSlider.value = _volumeControl.MusicVolume;
         _musicToggle.isOn = _volumeControl.MusicOn;
-
-        _soundsVolumeSlider.value = _volumeControl.SoundsVolume;
         _soundsToggle.isOn = _volumeControl.SoundsOn;
     }
 
-    
+    private void InitAudioTogglesImages()
+    {
+        TurnMusicImageOn(_musicToggle.isOn);
+        TurnSoundsImageOn(_soundsToggle.isOn);
+    }
 }

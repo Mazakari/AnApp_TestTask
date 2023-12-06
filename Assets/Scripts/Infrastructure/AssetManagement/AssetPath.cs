@@ -10,8 +10,8 @@ public static class AssetPath
     #endregion
 
     #region UI
-    public const string MAIN_MENU_CANVAS_PATH = "Prefabs/UI/MainMenuCanvas";
-    public const string SHOP_CANVAS_PATH = "Prefabs/UI/ShopCanvas";
+    public const string MAIN_MENU_CANVAS_PATH = "Prefabs/UI/MainMenuView_Canvas";
+    public const string SHOP_CANVAS_PATH = "Prefabs/UI/ShopView_Canvas";
     #endregion
 
     #region SHOP

@@ -7,7 +7,7 @@ public class LoadMainMenuState : IPayloadedState<string>
     private readonly IGameFactory _gameFactory;
     private readonly LoadingCurtain _curtain;
     private readonly IPersistentProgressService _progressService;
-    private readonly ILevelCellsService _cellsService;
+    private readonly ILevelService _cellsService;
 
     public LoadMainMenuState(
         GameStateMachine gameStateMachine, 
@@ -15,7 +15,7 @@ public class LoadMainMenuState : IPayloadedState<string>
         LoadingCurtain curtain, 
         IGameFactory gameFactory, 
         IPersistentProgressService progressService, 
-        ILevelCellsService cellsService)
+        ILevelService cellsService)
     {
         _gameStateMachine = gameStateMachine;
         _sceneLoader = sceneLoader;

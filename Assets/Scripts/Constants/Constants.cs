@@ -4,6 +4,15 @@
     public const int MOBILE_TARGET_FRAMERATE = 60;
     public const int PC_TARGET_FRAMERATE = 120;
     #endregion
+
+    #region AUDIO
+    public const string MUSIC_VOLUME_PARAMETER = "MusicVolume";
+    public const float DEFAULT_MUSIC_VOLUME = 0.5f;
+
+    public const string SOUNDS_VOLUME_PARAMETER = "SoundsVolume";
+    public const float DEFAULT_SOUNDS_VOLUME = 0.5f;
+    #endregion
+
     #region NEW PROGRESS DATA
     public const string PROGRESS_KEY = "ProgressKey";
     public const string INITIAL_SCENE_NAME = "Initial";

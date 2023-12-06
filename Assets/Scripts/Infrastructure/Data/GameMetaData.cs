@@ -10,7 +10,7 @@ public struct ShopItemData
 }
 
 [Serializable]
-public struct LevelCellsData
+public struct LevelCellData
 {
     public int number;
     public string sceneName;
@@ -25,16 +25,11 @@ public class GameMetaData
 
     public GameObject currentSkinPrefab;
 
-    public List<LevelCellsData> levels;
+    public List<LevelCellData> levels;
     public List<ShopItemData> skins;
 
-    public float musicVolume;
     public bool musicToggle;
-
-    public float soundVolume;
     public bool soundToggle;
-
-    public bool gameRated;
 
     public GameMetaData(int initialMoney, string initialLevel, GameObject defaultSkinPrefab)
 	{
@@ -43,13 +38,10 @@ public class GameMetaData
 
         currentSkinPrefab = defaultSkinPrefab;
 
-        levels = new List<LevelCellsData>();
+        levels = new List<LevelCellData>();
         skins = new List<ShopItemData>();
 
-        musicVolume = 0.5f;
         musicToggle = true;
-
-        soundVolume = 0.5f;
         soundToggle = true;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
@@ -8,79 +7,43 @@ public class VolumeControl : MonoBehaviour, ISavedProgress
     [SerializeField] public AudioMixer _audioMixer;
     public AudioMixer AudioMixer => _audioMixer;
 
-    private void Awake() =>
-        DontDestroyOnLoad(gameObject);
-
-    private string _musicVolumeParameter = "MusicVolume";
-    private bool _disableMusicToggleEvent;
-
-    public float MusicVolume { get; private set; }
     public bool MusicOn { get; private set; } = true;
-
-    private string _soundsVolumeParameter = "SoundsVolume";
-    private bool _disableSoundsToggleEvent = false;
-
-    public float SoundsVolume { get; private set; }
     public bool SoundsOn { get; private set; } = false;
 
+    private string _musicVolumeParameter = Constants.MUSIC_VOLUME_PARAMETER;
+    private float _musicVolume = Constants.DEFAULT_MUSIC_VOLUME;
+   
+    private string _soundsVolumeParameter = Constants.SOUNDS_VOLUME_PARAMETER;
+    private float _soundsVolume = Constants.DEFAULT_SOUNDS_VOLUME;
+
     private float _multiplier = 30f;
+    private float _mutedValue = -80f;
 
-    //private float _curMusicVol;
+    private void Awake() =>
+      DontDestroyOnLoad(gameObject);
 
-    public void HandleMusicSliderValueChanged(float value, Slider slider, Toggle toggle)
+    public void HandleMusicToggleChanged(bool value, Toggle toggle)
     {
-        value = Mathf.Clamp(value, 0.001f, slider.maxValue);
-        MusicVolume = value;
-
-        _audioMixer.SetFloat(_musicVolumeParameter, Mathf.Log10(value) * _multiplier);
-        _disableMusicToggleEvent = true;
-        toggle.isOn = slider.value > slider.minValue;
-        MusicOn = toggle.isOn;
-        _disableMusicToggleEvent = false;
-    }
-
-    public void HandleSoundsSliderValueChanged(float value, Slider slider, Toggle toggle)
-    {
-        value = Mathf.Clamp(value, 0.001f, slider.maxValue);
-        SoundsVolume = value;
-
-        _audioMixer.SetFloat(_soundsVolumeParameter, Mathf.Log10(value) * _multiplier);
-        _disableSoundsToggleEvent = true;
-        toggle.isOn = slider.value > slider.minValue;
-        SoundsOn = toggle.isOn;
-        _disableSoundsToggleEvent = false;
-    }
-
-    public void HandleMusicToggleChanged(bool value, Slider slider, Toggle toggle)
-    {
-        if (_disableMusicToggleEvent) return;
-
         if (!value)
         {
-            MusicVolume = slider.value;
-            slider.value = slider.minValue;
+            DisableMusic();
         }
         else
         {
-            slider.value = MusicVolume;
+            EnableMusic();
         }
 
         MusicOn = toggle.isOn;
     }
-
-    public void HandleSoundsToggleChanged(bool value, Slider slider, Toggle toggle)
+    public void HandleSoundsToggleChanged(bool value, Toggle toggle)
     {
-        if (_disableSoundsToggleEvent) return;
-
         if (!value)
         {
-            SoundsVolume = slider.value;
-            slider.value = slider.minValue;
-
+            DisableSound();
         }
         else
         {
-            slider.value = SoundsVolume;
+            EnableSound();
         }
 
         SoundsOn = toggle.isOn;
@@ -88,46 +51,78 @@ public class VolumeControl : MonoBehaviour, ISavedProgress
 
     public void UpdateProgress(PlayerProgress progress)
     {
-        progress.gameData.musicVolume = MusicVolume;
         progress.gameData.musicToggle = MusicOn;
-
-        progress.gameData.soundVolume = SoundsVolume;
         progress.gameData.soundToggle = SoundsOn;
     }
-
     public void LoadProgress(PlayerProgress progress)
     {
-        MusicVolume = progress.gameData.musicVolume;
-        MusicOn = progress.gameData.musicToggle;
-        _audioMixer.SetFloat(_musicVolumeParameter, Mathf.Log10(MusicVolume) * _multiplier);
-
-        SoundsVolume = progress.gameData.soundVolume;
-        SoundsOn = progress.gameData.soundToggle;
-        _audioMixer.SetFloat(_soundsVolumeParameter, Mathf.Log10(SoundsVolume) * _multiplier);
-
-        if (!MusicOn)
-        {
-            MusicVolume = -80f;
-            _audioMixer.SetFloat(_musicVolumeParameter, MusicVolume);
-        }
-
-        if (!SoundsOn)
-        {
-            SoundsVolume = -80f;
-            _audioMixer.SetFloat(_soundsVolumeParameter, SoundsVolume);
-        }
+        LoadMusicData(progress);
+        LoadSoundsData(progress);
     }
 
-    public void DisableAudio()
+    private void LoadMusicData(PlayerProgress progress)
     {
-        float muted = -80f;
-        _audioMixer.SetFloat(_musicVolumeParameter, muted);
-        _audioMixer.SetFloat(_soundsVolumeParameter, muted);
+        try
+        {
+            MusicOn = progress.gameData.musicToggle;
+
+            _musicVolume = SetDefaultVolume(_musicVolume);
+            if (!MusicOn)
+            {
+                _musicVolume = _mutedValue;
+            }
+
+            _audioMixer.SetFloat(_musicVolumeParameter, _musicVolume);
+        }
+        catch (System.Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
     }
 
-    public void EnableAudio()
+    private void LoadSoundsData(PlayerProgress progress)
     {
-        _audioMixer.SetFloat(_musicVolumeParameter, Mathf.Log10(MusicVolume) * _multiplier);
-        _audioMixer.SetFloat(_soundsVolumeParameter, Mathf.Log10(SoundsVolume) * _multiplier);
+        try
+        {
+            SoundsOn = progress.gameData.soundToggle;
+
+            _soundsVolume = SetDefaultVolume(_soundsVolume);
+            if (!SoundsOn)
+            {
+                _soundsVolume = _mutedValue;
+            }
+
+            _audioMixer.SetFloat(_soundsVolumeParameter, _soundsVolume);
+        }
+        catch (System.Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
     }
+
+    private void DisableMusic() => 
+        _audioMixer.SetFloat(_musicVolumeParameter, _mutedValue);
+    private void DisableSound() => 
+        _audioMixer.SetFloat(_soundsVolumeParameter, _mutedValue);
+
+    private void EnableMusic()
+    {
+        _musicVolume = Constants.DEFAULT_MUSIC_VOLUME;
+        _musicVolume = SetDefaultVolume(_musicVolume);
+
+        _audioMixer.SetFloat(_musicVolumeParameter, _musicVolume);
+    }
+
+    private void EnableSound()
+    {
+        _soundsVolume = Constants.DEFAULT_SOUNDS_VOLUME;
+        _soundsVolume = SetDefaultVolume(_soundsVolume);
+
+        _audioMixer.SetFloat(_soundsVolumeParameter, _soundsVolume);
+    }
+
+    private float SetDefaultVolume(float incomingValue) =>
+        Mathf.Log10(incomingValue) * _multiplier;
 }

@@ -21,12 +21,12 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
     [Header("Developers Popup")]
     [SerializeField] private GameObject _developersPopup;
 
-    private ILevelCellsService _levelCellsService;
+    private ILevelService _levelCellsService;
 
 
     private void OnEnable()
     {
-        _levelCellsService = AllServices.Container.Single<ILevelCellsService>();
+        _levelCellsService = AllServices.Container.Single<ILevelService>();
         SettingsPopup.OnSettingsSaved += HideSettingsPopup;
 
         InitPopups();
