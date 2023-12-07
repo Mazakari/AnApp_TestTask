@@ -19,6 +19,14 @@ public class GameFactory : IGameFactory
     #region SHOP
     public GameObject CreateShopItem(Transform parent) =>
      InstantiateRegistered(AssetPath.SHOP_ITEM_PREFAB_PATH, parent);
+
+    public ShopItemsStaticData GetShopData() => 
+        GetShopStaticData(AssetPath.SHOP_ITEMS_STATIC_DATA_PATH);
+    #endregion
+
+    #region LEVELS
+    public LevelsStaticData GetLevelsData() =>
+        GetLevelsStaticData(AssetPath.LEVELS_STATIC_DATA_PATH);
     #endregion
 
     #region HUDS
@@ -59,6 +67,21 @@ public class GameFactory : IGameFactory
         RegisterProgressWatchers(obj);
 
         return obj;
+    }
+    #endregion
+
+
+    #region STATIC DATA
+    private ShopItemsStaticData GetShopStaticData(string path)
+    {
+        ShopItemsStaticData data = _assets.GetShopItemsData(path);
+        return data;
+    }
+
+    private LevelsStaticData GetLevelsStaticData(string path)
+    {
+        LevelsStaticData data = _assets.GetLevelsData(path);
+        return data;
     }
     #endregion
 

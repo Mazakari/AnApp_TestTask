@@ -21,11 +21,20 @@ public class LevelCell : MonoBehaviour
     
     public static event Action<string> OnLevelCellPress;
 
-    public void UnlockLevel() => 
+    public void UnlockLevel()
+    {
+        if (!_levelLocked) return;
+
         _levelLocked = false;
+
+        LockedInUi(_levelLocked);
+    }
 
     public void InitLevelCell(int levelNumber, string levelName, bool levelLocked) => 
         InitLevelData(levelNumber, levelName, levelLocked);
+
+    public void LoadButtonLevel() =>
+        OnLevelCellPress?.Invoke(_levelSceneName);
 
     private void InitLevelData(int levelNumber, string levelName, bool levelLocked)
     {
@@ -34,9 +43,9 @@ public class LevelCell : MonoBehaviour
         _levelLocked = levelLocked;
 
         _levelNumberText.text = _levelNumber.ToString();
-        _lockedState.SetActive(_levelLocked);
+        LockedInUi(_levelLocked);
     }
 
-    public void LoadButtonLevel() =>
-        OnLevelCellPress?.Invoke(_levelSceneName);
+    private void LockedInUi(bool locked) =>
+       _lockedState.SetActive(locked);
 }

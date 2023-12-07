@@ -49,7 +49,7 @@ public class ShopItem : MonoBehaviour
         _equipButton.onClick.RemoveAllListeners();
     }
 
-    public void InitSkinItem(ShopItemSkinDataSO itemDataSO)
+    public void InitSkinItem(ShopItemSkinData itemDataSO)
     {
         try
         {

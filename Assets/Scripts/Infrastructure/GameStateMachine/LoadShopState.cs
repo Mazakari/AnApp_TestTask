@@ -65,12 +65,12 @@ public class LoadShopState : IPayloadedState<string>
         SpawnItem(skinsParent, _shopService.ShopItemDataSOList.SkinsData, _shopService.SkinItems);
     }
 
-    private void SpawnItem(Transform parent, List<ShopItemSkinDataSO> itemsDataList, List<ShopItem> shopItemsCollection)
+    private void SpawnItem(Transform parent, List<ShopItemSkinData> itemsDataList, List<ShopItem> shopItemsCollection)
     {
         shopItemsCollection.Clear();
 
         ShopItem item;
-        ShopItemSkinDataSO itemData;
+        ShopItemSkinData itemData;
 
         for (int i = 0; i < itemsDataList.Count; i++)
         {

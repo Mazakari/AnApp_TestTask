@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class ShopService : IShopService
 {
-    public ShopItemDataSOList ShopItemDataSOList { get; private set; }
+    public ShopItemsStaticData ShopItemDataSOList { get; private set; }
 
     public List<ShopItem> SkinItems { get; set; } = new List<ShopItem>();
 
     public ShopService() => 
-        ShopItemDataSOList = Resources.Load<ShopItemDataSOList>(AssetPath.SHOP_ITEMS_DATA_LIST_PATH);
+        ShopItemDataSOList = Resources.Load<ShopItemsStaticData>(AssetPath.SHOP_ITEMS_STATIC_DATA_PATH);
 
     public void ShowItemModelByName(ShopItemType modelsType, string itemModelName)
     {

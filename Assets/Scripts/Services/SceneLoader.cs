@@ -8,7 +8,7 @@ public class SceneLoader
 {
     private readonly ICoroutineRunner _coroutineRunner;
 
-    private List<string> _buildIndexScenesNames = new List<string>();
+    private List<string> _buildIndexScenesNames = new();
 
     public SceneLoader(ICoroutineRunner coroutineRunner) =>
         _coroutineRunner = coroutineRunner;
@@ -46,45 +46,24 @@ public class SceneLoader
         return totalScenesCount - firstLevelIndex;
     }
 
-    public int GetCurrentLevelNumber()
+    public string GetNextLevelName(string currentLevelName)
     {
-        int firstLevelIndex = GetFirstLevelIndex();
-        int curLevelIndex = SceneManager.GetActiveScene().buildIndex;
+        string nextLevelName = currentLevelName;
 
-        return (curLevelIndex - firstLevelIndex) + 1;
-    }
-
-    public int GetNextLevelNumber()
-    {
-        int nextLevelIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        int totalScenesIndexesCount = SceneManager.sceneCountInBuildSettings - 1;
-
-        int currentLevelNumber = GetCurrentLevelNumber();
-
-        if (nextLevelIndex <= totalScenesIndexesCount)
+        for (int i = 0; i < _buildIndexScenesNames.Count; i++)
         {
-            return currentLevelNumber + 1;
+            if (_buildIndexScenesNames[i].Equals(currentLevelName))
+            {
+                int nextLevelIndex = i + 1;
+                if (nextLevelIndex < _buildIndexScenesNames.Count)
+                {
+                    nextLevelName = _buildIndexScenesNames[nextLevelIndex];
+                    break;
+                }
+            }
         }
 
-        return currentLevelNumber;
-    }
-
-    public string GetCurrentLevelName() =>
-        SceneManager.GetActiveScene().name;
-
-    public string GetNextLevelName()
-    {
-        int nextLevelIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        int totalScenesIndexesCount = SceneManager.sceneCountInBuildSettings;
-
-        if (nextLevelIndex < totalScenesIndexesCount)
-        {
-            //return SceneManager.GetSceneByBuildIndex(nextLevelIndex).name;
-            return _buildIndexScenesNames[nextLevelIndex];
-        }
-
-        //return SceneManager.GetActiveScene().name;
-        return _buildIndexScenesNames[nextLevelIndex - 1];
+        return nextLevelName;
     }
 
     /// <summary>

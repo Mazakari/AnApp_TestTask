@@ -33,8 +33,4 @@
     #region SHOP TAGS
     public const string SKINS_TAB_TAG = "Skins Tab";
     #endregion
-
-    #region ASSETS PATHS
-    public const string LEVELS_DATA_SO_PATH = "Prefabs/LevelSelection/LevelsDataSO";
-    #endregion
 }

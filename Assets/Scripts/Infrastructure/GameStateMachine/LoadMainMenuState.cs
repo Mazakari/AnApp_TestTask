@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.MPE;
+using UnityEngine;
 
 public class LoadMainMenuState : IPayloadedState<string>
 {
@@ -61,7 +62,7 @@ public class LoadMainMenuState : IPayloadedState<string>
     }
 
     private void InitLevelCells() => 
-        _cellsService.InitService();
+        _cellsService.InitService(_progressService.Progress);
 
     private void InformProgressReaders()
     {

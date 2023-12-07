@@ -7,6 +7,7 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
     [Header("Level Selection Popup")]
     [SerializeField] private GameObject _levelSelectionPopup;
     [SerializeField] private Transform _levelSelectionContent;
+    [SerializeField] private RectTransform[] _levelCellsParents;
 
     [Space(10)]
     [Header("Shop Settings")]
@@ -17,74 +18,45 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
     [Header("Settings Popup")]
     [SerializeField] private GameObject _settingsPopup;
 
-    [Space(10)]
-    [Header("Developers Popup")]
-    [SerializeField] private GameObject _developersPopup;
-
     private ILevelService _levelCellsService;
+    private ISaveLoadService _saveLoadService;
 
 
     private void OnEnable()
     {
-        _levelCellsService = AllServices.Container.Single<ILevelService>();
-        SettingsPopup.OnSettingsSaved += HideSettingsPopup;
+        CacheServices();
+
+        SubscribeUICallbacks();
 
         InitPopups();
     }
+
+  
+
     private void Start() => 
         InitLevelsSelectionPopup();
 
-    private void OnDisable()
-    {
-        SettingsPopup.OnSettingsSaved -= HideSettingsPopup;
-    }
+    private void OnDisable() => 
+        UnsubscribeUICallbacks();
 
     public void ShowSelectLevelsPopup()
     {
         Debug.Log("ShowSelectLevelsPopup");
         _levelSelectionPopup.SetActive(true);
     }
-
     public void HideSelectLevelsPopup() => 
         _levelSelectionPopup.SetActive(false);
+
     public void LoadShop() =>
       OnShopButtonPress?.Invoke();
 
     public void ShowSettingsPopup() =>
         _settingsPopup.SetActive(true);
+    public void UpdateProgress(PlayerProgress progress) => 
+        _levelCellsService.UpdateLevelsProgress(progress);
 
-
-    public void QuitGame() => 
-        Application.Quit();
-
-    private void HideSettingsPopup() =>
-        _settingsPopup.SetActive(false);
-
-    private void InitPopups()
-    {
-        _levelSelectionPopup.SetActive(false);
-        _settingsPopup.SetActive(false);
-    }
-
-    private void InitLevelsSelectionPopup()
-    {
-        for (int i = 0; i < _levelCellsService.Levels.Length; i++)
-        {
-            ParentCellAndResetScale(i);
-        }
-    }
-
-    private void ParentCellAndResetScale(int i)
-    {
-        LevelCell cell = _levelCellsService.Levels[i];
-        cell.transform.SetParent(_levelSelectionContent);
-        cell.GetComponent<RectTransform>().localScale = Vector3.one;
-    }
-
-    public void UpdateProgress(PlayerProgress progress) {}
-    public void LoadProgress(PlayerProgress progress) => 
-        OverwriteLevelCellsData(progress);
-
+    public void LoadProgress(PlayerProgress progress) =>
+       OverwriteLevelCellsData(progress);
     private void OverwriteLevelCellsData(PlayerProgress progress)
     {
         int number;
@@ -99,8 +71,99 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
                 name = progress.gameData.levels[i].sceneName;
                 locked = progress.gameData.levels[i].locked;
 
-                _levelCellsService.Levels[i].InitLevelCell(number, name, locked);
+                OverwriteLevel(number, name, locked, i);
             }
         }
     }
+
+    private void HideSettingsPopup() =>
+        _settingsPopup.SetActive(false);
+
+    private void InitPopups()
+    {
+        try
+        {
+            _levelSelectionPopup.SetActive(false);
+            _settingsPopup.SetActive(false);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+      
+    }
+
+    private void InitLevelsSelectionPopup()
+    {
+        try
+        {
+            for (int i = 0; i < _levelCellsService.Levels.Length; i++)
+            {
+                ParentCellAndResetScale(i);
+                DeactivateLevelSpawnPosition(i);
+            }
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+    }
+    private void ParentCellAndResetScale(int i)
+    {
+        LevelCell cell = _levelCellsService.Levels[i];
+        RectTransform cellRectTransform = cell.GetComponent<RectTransform>();
+
+        cell.transform.SetParent(_levelSelectionContent);
+        cellRectTransform.localScale = Vector3.one;
+        cellRectTransform.position = _levelCellsParents[i].position;
+    }
+    private void DeactivateLevelSpawnPosition(int index) =>
+       _levelCellsParents[index].gameObject.SetActive(false);
+
+    private void OverwriteLevel(int number, string name, bool locked, int index)
+    {
+        try
+        {
+            if (index >= _levelCellsService.Levels.Length) return;
+
+            _levelCellsService.Levels[index].InitLevelCell(number, name, locked);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+    }
+
+    private void UnlockNextLevelAndSaveProgress(string currentLevelName)
+    {
+        UnlockNextLevel(currentLevelName);
+
+        SaveProgress();
+    }
+    private void UnlockNextLevel(string currentLevelName) => 
+        _levelCellsService.UnlockNextLevel(currentLevelName);
+    private void SaveProgress() => 
+        _saveLoadService.SaveProgress();
+
+    private void CacheServices()
+    {
+        _levelCellsService = AllServices.Container.Single<ILevelService>();
+        _saveLoadService = AllServices.Container.Single<ISaveLoadService>();
+    }
+
+    private void SubscribeUICallbacks()
+    {
+        SettingsPopup.OnSettingsSaved += HideSettingsPopup;
+        LevelCell.OnLevelCellPress += UnlockNextLevelAndSaveProgress;
+    }
+    private void UnsubscribeUICallbacks()
+    {
+        SettingsPopup.OnSettingsSaved -= HideSettingsPopup;
+        LevelCell.OnLevelCellPress -= UnlockNextLevelAndSaveProgress;
+    }
+
+   
 }

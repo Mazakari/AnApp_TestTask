@@ -2,7 +2,7 @@
 
 public interface IShopService : IService
 {
-    ShopItemDataSOList ShopItemDataSOList { get; }
+    ShopItemsStaticData ShopItemDataSOList { get; }
 
     List<ShopItem> SkinItems { get; set; }
 
