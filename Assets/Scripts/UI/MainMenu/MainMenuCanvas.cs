@@ -10,13 +10,18 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
     [SerializeField] private RectTransform[] _levelCellsParents;
 
     [Space(10)]
+    [Header("Settings Popup")]
+    [SerializeField] private GameObject _settingsPopup;
+
+    [Space(10)]
+    [Header("Daily Bonus Settings")]
+    [SerializeField] private GameObject _dailyBonusPopup;
+
+    [Space(10)]
     [Header("Shop Settings")]
     [SerializeField] private Button _shopButton;
     public static event Action OnShopButtonPress;
-
-    [Space(10)]
-    [Header("Settings Popup")]
-    [SerializeField] private GameObject _settingsPopup;
+   
 
     private ILevelService _levelCellsService;
     private ISaveLoadService _saveLoadService;
@@ -30,8 +35,6 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
 
         InitPopups();
     }
-
-  
 
     private void Start() => 
         InitLevelsSelectionPopup();
@@ -76,22 +79,11 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
         }
     }
 
-    private void HideSettingsPopup() =>
-        _settingsPopup.SetActive(false);
-
     private void InitPopups()
     {
-        try
-        {
-            _levelSelectionPopup.SetActive(false);
-            _settingsPopup.SetActive(false);
-        }
-        catch (Exception e)
-        {
-
-            Debug.Log(e.Message);
-        }
-      
+        HideSettingsPopup();
+        HideDailyBonusPopup();
+        HideLevelSelectionPopup();
     }
 
     private void InitLevelsSelectionPopup()
@@ -148,20 +140,60 @@ public class MainMenuCanvas : MonoBehaviour, ISavedProgress
     private void SaveProgress() => 
         _saveLoadService.SaveProgress();
 
+    private void HideLevelSelectionPopup()
+    {
+        try
+        {
+            _levelSelectionPopup.SetActive(false);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+       
+    }
+    private void HideSettingsPopup()
+    {
+        try
+        {
+            _settingsPopup.SetActive(false);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+    }
+    private void HideDailyBonusPopup()
+    {
+        try
+        {
+            _dailyBonusPopup.SetActive(false);
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
+        }
+
+    }
+
     private void CacheServices()
     {
         _levelCellsService = AllServices.Container.Single<ILevelService>();
         _saveLoadService = AllServices.Container.Single<ISaveLoadService>();
     }
-
     private void SubscribeUICallbacks()
     {
         SettingsPopup.OnSettingsSaved += HideSettingsPopup;
+        DailyBonusPopup.OnCloseDailyBonusPopup += HideDailyBonusPopup;
         LevelCell.OnLevelCellPress += UnlockNextLevelAndSaveProgress;
     }
     private void UnsubscribeUICallbacks()
     {
         SettingsPopup.OnSettingsSaved -= HideSettingsPopup;
+        DailyBonusPopup.OnCloseDailyBonusPopup -= HideDailyBonusPopup;
         LevelCell.OnLevelCellPress -= UnlockNextLevelAndSaveProgress;
     }
 

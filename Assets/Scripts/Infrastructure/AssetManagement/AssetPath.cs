@@ -5,10 +5,6 @@ public static class AssetPath
     public const string VOLUME_CONTROL_PREFAB_PATH = "Prefabs/Audio/VolumeControl";
     #endregion
 
-    #region PLAYER
-    public const string LEVEL_CELL_PREFAB_PATH = "Prefabs/LevelSelection/LevelCell";
-    #endregion
-
     #region UI
     public const string MAIN_MENU_CANVAS_PATH = "Prefabs/UI/MainMenuView_Canvas";
     public const string SHOP_CANVAS_PATH = "Prefabs/UI/ShopView_Canvas";
@@ -23,6 +19,12 @@ public static class AssetPath
     #endregion
 
     #region LEVELS
+    public const string LEVEL_CELL_PREFAB_PATH = "Prefabs/LevelSelection/LevelCellPrefab";
     public const string LEVELS_STATIC_DATA_PATH = "StaticData/Levels/LevelsStaticData";
+    #endregion
+
+    #region DAILY BONUS
+    public const string DAILY_BONUS_CELL_PREFAB_PATH = "Prefabs/DailyBonus/DailyBonusCellPrefab";
+    public const string DAILY_BONUS_STATIC_DATA_PATH = "StaticData/DailyBonus/DailyBonusStaticData";
     #endregion
 }

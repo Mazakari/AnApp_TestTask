@@ -2,6 +2,7 @@
 
 public interface IAssets : IService
 {
+    DailyBonusStaticData GetDailyBonusData(string path);
     LevelsStaticData GetLevelsData(string path);
     ShopItemsStaticData GetShopItemsData(string path);
     GameObject Instantiate(string path);

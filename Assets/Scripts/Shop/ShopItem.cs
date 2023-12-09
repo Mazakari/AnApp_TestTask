@@ -31,7 +31,7 @@ public class ShopItem : MonoBehaviour
     [HideInInspector] public bool isLocked = false;
 
     public static event Action<ShopItem> OnShopItemEquipped;
-    public static event Action<int> OnShopItemBuy;
+    //public static event Action<int> OnShopItemBuy;
 
     private void OnEnable()
     {
@@ -109,11 +109,11 @@ public class ShopItem : MonoBehaviour
             if(money >= _unlockCost)
             {
                 // Deduct player money
-                money -= _unlockCost;
-                _metaResourcesService.PlayerMoney = money;
+                _metaResourcesService.PlayerMoney -= _unlockCost;
 
                 // Send callback for PlayerMoney to updte money counter
-                OnShopItemBuy?.Invoke(money);
+                //money -= _unlockCost;
+                //OnShopItemBuy?.Invoke(money);
 
                 // Unlock item
                 isLocked = false;

@@ -104,7 +104,8 @@ public partial class LevelService : ILevelService
     {
         try
         {
-            if(progress.gameData.levels.Count == 0)
+            if(progress.gameData.levels.Count == 0 ||
+                progress == null)
             {
                 for (int i = 0; i < _levelsData.Length; i++)
                 {

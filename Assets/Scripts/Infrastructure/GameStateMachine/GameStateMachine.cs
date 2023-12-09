@@ -15,14 +15,16 @@ public class GameStateMachine
                 this, 
                 services.Single<IPersistentProgressService>(), 
                 services.Single<ISaveLoadService>(), 
-                services.Single<ISkinsService>()),
+                services.Single<ISkinsService>(),
+                services.Single<IGameFactory>()),
             [typeof(LoadMainMenuState)] = new LoadMainMenuState(
                 this, 
                 sceneLoader, 
                 curtain, 
                 services.Single<IGameFactory>(), 
                 services.Single<IPersistentProgressService>(), 
-                services.Single<ILevelService>()),
+                services.Single<ILevelService>(),
+                services.Single<IDailyBonusService>()),
             [typeof(MainMenuState)] = new MainMenuState(this),
             [typeof(LoadShopState)] = new LoadShopState(
                 this, 

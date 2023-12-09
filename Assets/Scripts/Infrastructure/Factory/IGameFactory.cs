@@ -15,4 +15,6 @@ public interface IGameFactory : IService
     GameObject SpawnPlayerSkin(GameObject prefab, Vector2 at);
     ShopItemsStaticData GetShopData();
     LevelsStaticData GetLevelsData();
+    DailyBonusStaticData GetDailyBonusData();
+    GameObject CreateDailyBonusCell();
 }

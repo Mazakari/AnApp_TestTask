@@ -29,14 +29,23 @@ public class GameFactory : IGameFactory
         GetLevelsStaticData(AssetPath.LEVELS_STATIC_DATA_PATH);
     #endregion
 
+    #region DAILY BONUS
+    public DailyBonusStaticData GetDailyBonusData() =>
+        GetDailyBonusStaticData(AssetPath.DAILY_BONUS_STATIC_DATA_PATH);
+    #endregion
+
     #region HUDS
     public void CreateMainMenulHud() =>
        InstantiateRegistered(AssetPath.MAIN_MENU_CANVAS_PATH);
+
     public void CreateShopHud() =>
       InstantiateRegistered(AssetPath.SHOP_CANVAS_PATH);
 
     public GameObject CreateLevelCell() =>
       InstantiateRegistered(AssetPath.LEVEL_CELL_PREFAB_PATH);
+
+    public GameObject CreateDailyBonusCell() =>
+      InstantiateRegistered(AssetPath.DAILY_BONUS_CELL_PREFAB_PATH);
     #endregion
 
     #region SYSTEM
@@ -81,6 +90,12 @@ public class GameFactory : IGameFactory
     private LevelsStaticData GetLevelsStaticData(string path)
     {
         LevelsStaticData data = _assets.GetLevelsData(path);
+        return data;
+    }
+
+    private DailyBonusStaticData GetDailyBonusStaticData(string path)
+    {
+        DailyBonusStaticData data = _assets.GetDailyBonusData(path);
         return data;
     }
     #endregion

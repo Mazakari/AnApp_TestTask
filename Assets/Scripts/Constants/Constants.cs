@@ -17,7 +17,11 @@
     public const string PROGRESS_KEY = "ProgressKey";
     public const string INITIAL_SCENE_NAME = "Initial";
     public const string NEW_PROGRESS_FIRST_LEVEL_SCENE_NAME = "Level1";
+    public const int FIRST_LEVEL_SCENE_BUILD_INDEX = 3;
     public const int NEW_PROGRESS_PLAYER_MONEY_AMOUNT = 0;
+    public const int DEFAULT_MAX_STREAK_DAYS = 7;
+    public const int DEFAULT_MAX_STREAK_REWARD = 1000;
+    public const float DEFAULT_CLAIM_REWARD_COOLDOWN = 24f;
     #endregion
 
     #region SCENE NAMES

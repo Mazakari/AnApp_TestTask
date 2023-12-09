@@ -28,4 +28,10 @@ public class AssetProvider : IAssets
         LevelsStaticData data = Resources.Load<LevelsStaticData>(path);
         return data;
     }
+
+    public DailyBonusStaticData GetDailyBonusData(string path)
+    {
+        DailyBonusStaticData data = Resources.Load<DailyBonusStaticData>(path);
+        return data;
+    }
 }

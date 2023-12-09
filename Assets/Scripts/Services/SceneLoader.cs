@@ -18,7 +18,7 @@ public class SceneLoader
 
     private IEnumerator LoadScene(string nextScene, Action onLoaded = null)
     {
-        int firstlevelIndex = 2;
+        int firstlevelIndex = Constants.FIRST_LEVEL_SCENE_BUILD_INDEX;
 
         if (SceneManager.GetActiveScene().name == nextScene &&
             SceneManager.GetActiveScene().buildIndex < firstlevelIndex)

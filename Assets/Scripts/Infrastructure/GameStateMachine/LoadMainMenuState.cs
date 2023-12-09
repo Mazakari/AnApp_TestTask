@@ -1,5 +1,4 @@
-﻿using UnityEditor.MPE;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LoadMainMenuState : IPayloadedState<string>
 {
@@ -9,6 +8,7 @@ public class LoadMainMenuState : IPayloadedState<string>
     private readonly LoadingCurtain _curtain;
     private readonly IPersistentProgressService _progressService;
     private readonly ILevelService _cellsService;
+    private readonly IDailyBonusService _dailyBonusService;
 
     public LoadMainMenuState(
         GameStateMachine gameStateMachine, 
@@ -16,7 +16,8 @@ public class LoadMainMenuState : IPayloadedState<string>
         LoadingCurtain curtain, 
         IGameFactory gameFactory, 
         IPersistentProgressService progressService, 
-        ILevelService cellsService)
+        ILevelService cellsService,
+        IDailyBonusService dailyBonusService)
     {
         _gameStateMachine = gameStateMachine;
         _sceneLoader = sceneLoader;
@@ -25,6 +26,7 @@ public class LoadMainMenuState : IPayloadedState<string>
         _gameFactory = gameFactory;
         _progressService = progressService;
         _cellsService = cellsService;
+        _dailyBonusService = dailyBonusService;
     }
 
     public void Enter(string sceneName)
@@ -42,16 +44,16 @@ public class LoadMainMenuState : IPayloadedState<string>
     {
         InitMainMenu();
         InitVolumeControl();
-        InitLevelCells();
+        InitServices();
 
         InformProgressReaders();
         _gameStateMachine.Enter<MainMenuState>();
     }
 
-    private void InitMainMenu()
-    {
+    
+
+    private void InitMainMenu() => 
         _gameFactory.CreateMainMenulHud();
-    }
 
     private void InitVolumeControl()
     {
@@ -60,10 +62,23 @@ public class LoadMainMenuState : IPayloadedState<string>
 
         _gameFactory.CreateVolumeControl();
     }
+    private void InitServices()
+    {
+        try
+        {
+            InitLevelCells();
+            ImitDailyBonusCells();
+        }
+        catch (System.Exception e)
+        {
 
+            Debug.Log(e.Message);
+        }
+    }
     private void InitLevelCells() => 
         _cellsService.InitService(_progressService.Progress);
-
+    private void ImitDailyBonusCells() =>
+       _dailyBonusService.InitService(_progressService.Progress);
     private void InformProgressReaders()
     {
         foreach (ISavedProgress progressReader in _gameFactory.ProgressReaders)
