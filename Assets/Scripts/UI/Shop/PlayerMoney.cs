@@ -10,20 +10,14 @@ public class PlayerMoney : MonoBehaviour, ISavedProgress
 
     private void OnEnable()
     {
-        _metaResourcesService = AllServices.Container.Single<IMetaResourcesService>();
+        CacheServices();
+        SubscribeUICallbacks();
 
-        MetaResourcesService.OnMoneyValueChange += UpdateCounter;
-        //ShopItem.OnShopItemBuy += UpdateCounter;
-
-        _money = _metaResourcesService.PlayerMoney;
-        UpdateCounter(_money);
+        InitMoneyCounter();
     }
 
-    private void OnDisable()
-    {
-        MetaResourcesService.OnMoneyValueChange -= UpdateCounter;
-        //ShopItem.OnShopItemBuy -= UpdateCounter;
-    }
+    private void OnDisable() => 
+        UnsubscribeUICallbacks();
 
     public void UpdateCounter(int newMoneyValue) => 
         _moneyCounter.text = newMoneyValue.ToString();
@@ -38,7 +32,18 @@ public class PlayerMoney : MonoBehaviour, ISavedProgress
     {
         _money = progress.gameData.playerMoney;
         _metaResourcesService.PlayerMoney = _money;
+    }
 
-        //UpdateCounter(_money);
+    private void CacheServices() =>
+       _metaResourcesService = AllServices.Container.Single<IMetaResourcesService>();
+
+    private void SubscribeUICallbacks() =>
+       MetaResourcesService.OnMoneyValueChange += UpdateCounter;
+    private void UnsubscribeUICallbacks() =>
+       MetaResourcesService.OnMoneyValueChange -= UpdateCounter;
+    private void InitMoneyCounter()
+    {
+        _money = _metaResourcesService.PlayerMoney;
+        UpdateCounter(_money);
     }
 }

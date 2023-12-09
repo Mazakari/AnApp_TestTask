@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class DailyBonusPopup : MonoBehaviour
+public class DailyBonusPopup : MonoBehaviour 
 {
     public static event Action OnCloseDailyBonusPopup;
 
@@ -26,9 +26,13 @@ public class DailyBonusPopup : MonoBehaviour
 
     public void ClosePopup()
     {
-        //ToDo save rewards progress
-        OnCloseDailyBonusPopup?.Invoke();
+        SaveStreakData();
+        SendClosePopupCallback();
     }
+    private void SaveStreakData() =>
+      _dailyBonusService.SaveStreakData();
+    private void SendClosePopupCallback() => 
+        OnCloseDailyBonusPopup?.Invoke();
 
     private void CacheServices() =>
          _dailyBonusService = AllServices.Container.Single<IDailyBonusService>();

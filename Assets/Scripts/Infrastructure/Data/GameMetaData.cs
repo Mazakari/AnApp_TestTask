@@ -28,6 +28,8 @@ public class GameMetaData
     public int maxStreak;
     public float streakCooldown;
 
+    public DateTime? lastClaimTime;
+
     public GameObject currentSkinPrefab;
 
     public List<LevelCellData> levels;

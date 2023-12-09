@@ -17,9 +17,15 @@ public class DailyBonusService : IDailyBonusService
     private List<DailyBonusCell> _dailyBonusCells;
 
     private readonly IGameFactory _gameFactory;
+    private readonly ISaveLoadService _saveLoadService;
+    private readonly IPersistentProgressService _progressService;
 
-    public DailyBonusService(IGameFactory gameFactory) => 
+    public DailyBonusService(IGameFactory gameFactory, ISaveLoadService saveLoadService, IPersistentProgressService progressService)
+    {
         _gameFactory = gameFactory;
+        _saveLoadService = saveLoadService;
+        _progressService = progressService;
+    }
 
     public void InitService(PlayerProgress progress)
     {
@@ -53,21 +59,38 @@ public class DailyBonusService : IDailyBonusService
         }
     }
 
+    public void SaveStreakData()
+    {
+        WriteStreakProgress();
+        SaveStreakProgress();
+    }
+
+    private void WriteStreakProgress()
+    {
+        PlayerProgress progress = _progressService.Progress;
+        progress.gameData.currentStreak = CurrentStreak;
+        progress.gameData.maxStreak = MaxStreak;
+
+        if (LastClaimTime.HasValue)
+        {
+            progress.gameData.lastClaimTime = LastClaimTime;
+        }
+    }
+
+    private void SaveStreakProgress() =>
+       _saveLoadService.SaveProgress();
+
     private void InitStreakValues(PlayerProgress progress)
     {
         try
         {
-            MaxStreakReward = _dailyBonusStaticData.maxStreakReward;
-            CurrentStreak = 0;
-            MaxStreak = _dailyBonusStaticData.maxDaysStreak;
-            ClaimCooldown = _dailyBonusStaticData.claimCooldown;
+            LoadFromStaticData();
 
             if (progress != null)
             {
-                MaxStreakReward = progress.gameData.maxStreakReward;
-                CurrentStreak = progress.gameData.currentStreak;
-                MaxStreak = progress.gameData.maxStreak;
-                ClaimCooldown = progress.gameData.streakCooldown;
+                LoadFromPlayerProgress(progress);
+                TryLoadLastClaimTime(progress);
+
             }
         }
         catch (Exception e)
@@ -76,6 +99,30 @@ public class DailyBonusService : IDailyBonusService
             Debug.Log(e.Message);
         }
     }
+    private void LoadFromPlayerProgress(PlayerProgress progress)
+    {
+        MaxStreakReward = progress.gameData.maxStreakReward;
+        CurrentStreak = progress.gameData.currentStreak;
+        MaxStreak = progress.gameData.maxStreak;
+        ClaimCooldown = progress.gameData.streakCooldown;
+    }
+    private void LoadFromStaticData()
+    {
+        MaxStreakReward = _dailyBonusStaticData.maxStreakReward;
+        CurrentStreak = 0;
+        MaxStreak = _dailyBonusStaticData.maxDaysStreak;
+        ClaimCooldown = _dailyBonusStaticData.claimCooldown;
+    }
+
+    private void TryLoadLastClaimTime(PlayerProgress progress)
+    {
+        DateTime? time = progress.gameData.lastClaimTime;
+        if (time.HasValue)
+        {
+            LastClaimTime = progress.gameData.lastClaimTime;
+        }
+    }
+
     private void SpawnDailyBonusCells()
     {
         try

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DailyBonusStaticData
   m_EditorClassIdentifier: 
   maxStreakReward: 1000
-  maxDaysStreak: 3
+  maxDaysStreak: 6
   claimCooldown: 0.001388889
   rewards:
   - sprite: {fileID: 21300000, guid: 91b73da1d6b5eca4fb5887e8e3fceea7, type: 3}
@@ -28,3 +28,15 @@ MonoBehaviour:
     type: 0
     value: 50
     dayNumber: 3
+  - sprite: {fileID: 21300000, guid: 91b73da1d6b5eca4fb5887e8e3fceea7, type: 3}
+    type: 0
+    value: 100
+    dayNumber: 4
+  - sprite: {fileID: 21300000, guid: 91b73da1d6b5eca4fb5887e8e3fceea7, type: 3}
+    type: 0
+    value: 200
+    dayNumber: 5
+  - sprite: {fileID: 21300000, guid: 91b73da1d6b5eca4fb5887e8e3fceea7, type: 3}
+    type: 0
+    value: 400
+    dayNumber: 6

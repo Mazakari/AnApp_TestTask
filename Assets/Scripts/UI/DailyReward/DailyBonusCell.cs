@@ -25,7 +25,6 @@ public class DailyBonusCell : MonoBehaviour
     private IDailyBonusService _dailyBonusService;
     private IMetaResourcesService _metaResourcesService;
 
-
     private void OnEnable() => 
         CacheServices();
 
@@ -111,10 +110,17 @@ public class DailyBonusCell : MonoBehaviour
        _background.color = day == currentStreak ? _currentStreakColor : _defaultColor;
     private void UpdateClaimTimeAndCurrentStreak()
     {
+        UpdateStreak();
+        SaveStreakProgress();
+    }
+
+    private void UpdateStreak()
+    {
         _dailyBonusService.LastClaimTime = DateTime.UtcNow;
         _dailyBonusService.CurrentStreak = (_dailyBonusService.CurrentStreak + 1) % _dailyBonusService.MaxStreak;
-        Debug.Log($"CurrentStreak = {_dailyBonusService.CurrentStreak}");
     }
+    private void SaveStreakProgress() => 
+        _dailyBonusService.SaveStreakData();
 
     private void AddBonusReward() => 
         _metaResourcesService.PlayerMoney += _cellReward.value;

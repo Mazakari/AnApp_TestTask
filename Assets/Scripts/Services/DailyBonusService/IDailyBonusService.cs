@@ -11,5 +11,6 @@ public interface IDailyBonusService : IService
 
     void InitService(PlayerProgress progress);
     void ParentCellAndResetScale(RectTransform parent);
+    void SaveStreakData();
     void UpdateRewardCellsData(bool rewardCooldownPassed);
 }
