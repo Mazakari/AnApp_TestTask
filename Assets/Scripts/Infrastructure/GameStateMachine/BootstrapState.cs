@@ -42,7 +42,7 @@ public class BootstrapState : IState
             _services.Single<IGameFactory>()));
         _services.RegisterSingle<ILevelService>(new LevelService(_services.Single<IGameFactory>(), _sceneLoader));
         _services.RegisterSingle<IMetaResourcesService>(new MetaResourcesService(_services.Single<ISaveLoadService>()));
-        _services.RegisterSingle<IShopService>(new ShopService());
+        _services.RegisterSingle<IShopService>(new ShopService(_services.Single<IGameFactory>(), _services.Single<ILevelService>()));
         _services.RegisterSingle<ISkinsService>(new SkinsService());
         _services.RegisterSingle<IDailyBonusService>(new DailyBonusService(
             _services.Single<IGameFactory>(), 
@@ -51,6 +51,12 @@ public class BootstrapState : IState
     }
 
     // System Settings
-    private void SetFpsTarget() =>
-        Application.targetFrameRate = Constants.MOBILE_TARGET_FRAMERATE;
+    private void SetFpsTarget()
+    {
+        int targetFps = Constants.PC_TARGET_FRAMERATE;
+#if !UNITY_STANDALONE
+targetFps = Constants.MOBILE_TARGET_FRAMERATE;
+#endif
+        Application.targetFrameRate = targetFps;
+    }
 }

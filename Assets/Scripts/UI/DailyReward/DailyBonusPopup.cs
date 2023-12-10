@@ -12,7 +12,7 @@ public class DailyBonusPopup : MonoBehaviour
 
     private bool _rewardColldownPassed = false;
 
-    private float _claimDeadline = 48f;
+    private readonly float _claimDeadline = Constants.DEFAULT_REWARD_DEADLINE;
 
     private void OnEnable()
     {
@@ -59,8 +59,7 @@ public class DailyBonusPopup : MonoBehaviour
 
             if (timeSpan.TotalHours > _claimDeadline)
             {
-                _dailyBonusService.LastClaimTime = null;
-                _dailyBonusService.CurrentStreak = 0;
+                ResetStreak();
             }
             else if(timeSpan.TotalHours < _dailyBonusService.ClaimCooldown)
             {
@@ -71,6 +70,12 @@ public class DailyBonusPopup : MonoBehaviour
         UpdateRewardsUI();
     }
 
+    private void ResetStreak()
+    {
+        _dailyBonusService.LastClaimTime = null;
+        _dailyBonusService.CurrentStreak = 0;
+    }
+
     private void UpdateRewardsUI()
     {
         if (_rewardColldownPassed)
@@ -79,13 +84,21 @@ public class DailyBonusPopup : MonoBehaviour
         }
         else
         {
-            var nextClaimTime = _dailyBonusService.LastClaimTime.Value.AddHours(_dailyBonusService.ClaimCooldown);
-            var currentClaimCooldown = nextClaimTime - DateTime.UtcNow;
-
-            string cd = $"{currentClaimCooldown.Hours:D2}:{currentClaimCooldown.Minutes:D2}:{currentClaimCooldown.Seconds:D2}";
-            Debug.Log($"Come back in {cd} for your next reward");
+            EstimateClaimRewardCooldown();
         }
 
+        UpdateDailyBonusCellsData();
+    }
+
+    private void UpdateDailyBonusCellsData() => 
         _dailyBonusService.UpdateRewardCellsData(_rewardColldownPassed);
+
+    private void EstimateClaimRewardCooldown()
+    {
+        var nextClaimTime = _dailyBonusService.LastClaimTime.Value.AddHours(_dailyBonusService.ClaimCooldown);
+        var currentClaimCooldown = nextClaimTime - DateTime.UtcNow;
+
+        string cd = $"{currentClaimCooldown.Hours:D2}:{currentClaimCooldown.Minutes:D2}:{currentClaimCooldown.Seconds:D2}";
+        Debug.Log($"Come back in {cd} for your next reward");
     }
 }

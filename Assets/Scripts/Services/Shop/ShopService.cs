@@ -1,100 +1,74 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ShopService : IShopService
 {
-    public ShopItemsStaticData ShopItemDataSOList { get; private set; }
+    public ShopStaticData ItemsStaticData { get; private set; }
 
-    public List<ShopItem> SkinItems { get; set; } = new List<ShopItem>();
+    private List<ShopItem> _tickets = new();
+    private List<ShopItem> _skins = new();
+    private List<ShopItem> _locations = new();
 
-    public ShopService() => 
-        ShopItemDataSOList = Resources.Load<ShopItemsStaticData>(AssetPath.SHOP_ITEMS_STATIC_DATA_PATH);
 
-    public void ShowItemModelByName(ShopItemType modelsType, string itemModelName)
+    private readonly IGameFactory _gameFactory;
+    private readonly ILevelService _levelService;
+
+    public ShopService(IGameFactory gameFactory, ILevelService levelService)
     {
-        List<ShopItem> modelsToHide = IdentifyItemsType(modelsType);
+        _gameFactory = gameFactory;
+        _levelService = levelService;
 
-        ShowByName(itemModelName, modelsToHide);
+        CacheShopStaticData();
     }
 
-    public void ShowItemModelByIndex(ShopItemType modelsType, int indexToShow)
-    {
-        List<ShopItem> modelsToHide = IdentifyItemsType(modelsType);
+    private void CacheShopStaticData() => 
+        ItemsStaticData = _gameFactory.GetShopData();
 
-        ShowByIndex(indexToShow, modelsToHide);
+    public void InitShopItems()
+    {
+        GetShopItems();
+        LoadStaticDataToItems();
     }
-
-    public void HideAllModelsByType(ShopItemType modelsType)
+    private void GetShopItems()
     {
-        List<ShopItem> modelsToHide = IdentifyItemsType(modelsType);
-
-        HideModelsCollection(modelsToHide);
-    }
-
-    public void ShowEquippedItemModel(ShopItemType modelsType)
-    {
-        List<ShopItem> modelsToHide = IdentifyItemsType(modelsType);
-        ShowEquipped(modelsToHide);
-    }
-
-    private List<ShopItem> IdentifyItemsType(ShopItemType type)
-    {
-        List<ShopItem> modelsToHide = new();
-        if (type == ShopItemType.Skin)
+        try
         {
-            modelsToHide = SkinItems;
+            GameObject contentParent = GameObject.FindGameObjectWithTag(Constants.SHOP_BLOCK_TICKETS_CONTENT_TAG);
+            _tickets = contentParent.GetComponentsInChildren<ShopItem>().ToList();
+
+            contentParent = GameObject.FindGameObjectWithTag(Constants.SHOP_BLOCK_SKINS_CONTENT_TAG);
+            _skins = contentParent.GetComponentsInChildren<ShopItem>().ToList();
+
+            contentParent = GameObject.FindGameObjectWithTag(Constants.SHOP_BLOCK_LOCATIONS_CONTENT_TAG);
+            _locations = contentParent.GetComponentsInChildren<ShopItem>().ToList();
         }
-
-        return modelsToHide;
-    }
-
-    private void HideModelsCollection(List<ShopItem> collection)
-    {
-        for (int i = 0; i < collection.Count; i++)
+        catch (Exception e)
         {
-            collection[i].ItemModel.SetActive(false);
+
+            Debug.Log(e.Message);
         }
     }
-
-    private void ShowByIndex(int indexToShow, List<ShopItem> modelsToHide)
+    private void LoadStaticDataToItems()
     {
-        for (int i = 0; i < modelsToHide.Count; i++)
+        try
         {
-            if (i == indexToShow)
-            {
-                modelsToHide[i].ItemModel.SetActive(true);
-                continue;
-            }
+            LoadShopItemDataFromStaticData(_tickets, ItemsStaticData.TicketsData);
+            LoadShopItemDataFromStaticData(_skins, ItemsStaticData.SkinsData);
+            LoadShopItemDataFromStaticData(_locations, ItemsStaticData.LevelsData);
+        }
+        catch (Exception e)
+        {
 
-            modelsToHide[i].ItemModel.SetActive(false);
+            Debug.Log(e.Message);
         }
     }
-
-    private void ShowByName(string itemModelName, List<ShopItem> modelsToHide)
+    private void LoadShopItemDataFromStaticData(List<ShopItem> items, List<ShopItemStaticData> staticData)
     {
-        for (int i = 0; i < modelsToHide.Count; i++)
+        for (int i = 0; i < items.Count; i++)
         {
-            if (modelsToHide[i].ItemModel.name == itemModelName)
-            {
-                modelsToHide[i].ItemModel.SetActive(true);
-                continue;
-            }
-
-            modelsToHide[i].ItemModel.SetActive(false);
-        }
-    }
-
-    private void ShowEquipped(List<ShopItem> itemsToSearchEquipped)
-    {
-        for (int i = 0; i < itemsToSearchEquipped.Count; i++)
-        {
-            if (itemsToSearchEquipped[i].isEquipped)
-            {
-                itemsToSearchEquipped[i].ItemModel.SetActive(true);
-                continue;
-            }
-
-            itemsToSearchEquipped[i].ItemModel.SetActive(false);
+            items[i].InitItemWithStaticData(staticData[i]);
         }
     }
 }

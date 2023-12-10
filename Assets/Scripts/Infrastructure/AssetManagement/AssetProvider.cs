@@ -17,9 +17,9 @@ public class AssetProvider : IAssets
     public GameObject Instantiate(GameObject prefab, Vector2 at) =>
         Object.Instantiate(prefab, at, Quaternion.identity);
 
-    public ShopItemsStaticData GetShopItemsData(string path)
+    public ShopStaticData GetShopItemsData(string path)
     {
-        ShopItemsStaticData data = Resources.Load<ShopItemsStaticData>(path);
+        ShopStaticData data = Resources.Load<ShopStaticData>(path);
         return data;
     }
 

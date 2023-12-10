@@ -20,8 +20,8 @@ public struct LevelCellData
 [Serializable]
 public class GameMetaData
 {
-    public string nextLevel;
-    public int playerMoney;
+    public int currentLevelBuildIndex;
+    public float playerMoney;
 
     public int currentStreak;
     public int maxStreakReward;
@@ -39,10 +39,10 @@ public class GameMetaData
     public bool soundToggle;
    
 
-    public GameMetaData(int initialMoney, int defaultStreakReward, int defaultMaxStreak, float sefaultStreakCooldown, string initialLevel, GameObject defaultSkinPrefab)
+    public GameMetaData(float initialMoney, int defaultStreakReward, int defaultMaxStreak, float sefaultStreakCooldown, int initialLevelBuildIndex, GameObject defaultSkinPrefab)
 	{
         playerMoney = initialMoney;
-        nextLevel = initialLevel;
+        currentLevelBuildIndex = initialLevelBuildIndex;
 
         currentStreak = 0;
         maxStreakReward = defaultStreakReward;

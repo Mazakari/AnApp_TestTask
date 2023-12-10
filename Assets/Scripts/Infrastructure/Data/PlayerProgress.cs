@@ -6,8 +6,8 @@ public class PlayerProgress
 {
     public GameMetaData gameData;
 
-    public PlayerProgress(int initialMoney, int defaultStreakReward, int defaultMaxStreak, float sefaultStreakCooldown, string initialLevel, GameObject defaultPlayerSkinPrefab)
+    public PlayerProgress(float initialMoney, int defaultStreakReward, int defaultMaxStreak, float sefaultStreakCooldown, int initialLevelBuildIndex, GameObject defaultPlayerSkinPrefab)
     {
-        gameData = new GameMetaData(initialMoney, defaultStreakReward, defaultMaxStreak, sefaultStreakCooldown, initialLevel, defaultPlayerSkinPrefab);
+        gameData = new GameMetaData(initialMoney, defaultStreakReward, defaultMaxStreak, sefaultStreakCooldown, initialLevelBuildIndex, defaultPlayerSkinPrefab);
     }
 }

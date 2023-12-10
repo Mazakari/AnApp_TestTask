@@ -3,5 +3,4 @@
     Skin,
     Ticket,
     Location
-
 }

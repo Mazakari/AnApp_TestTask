@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerMoney : MonoBehaviour, ISavedProgress
 {
     [SerializeField] private TMP_Text _moneyCounter;
-    private int _money;
+    private float _money;
 
     private IMetaResourcesService _metaResourcesService;
 
@@ -19,7 +19,7 @@ public class PlayerMoney : MonoBehaviour, ISavedProgress
     private void OnDisable() => 
         UnsubscribeUICallbacks();
 
-    public void UpdateCounter(int newMoneyValue) => 
+    public void UpdateCounter(float newMoneyValue) => 
         _moneyCounter.text = newMoneyValue.ToString();
 
     public void UpdateProgress(PlayerProgress progress)

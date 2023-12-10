@@ -5,62 +5,86 @@ using UnityEngine.UI;
 
 public class ShopItem : MonoBehaviour
 {
+    public bool IsEquipped { get; set; } = false;
+    public bool NeedToUnlock { get; set; } = false;
+
     public ShopItemType Type { get; private set; }
 
-    [SerializeField] private Image _itemImage;
+    [Space(10)]
+    [Header("Unlock Requirements")]
+    private int _unlocksOnLevel;
 
-    private GameObject _itemPrefab;
-    public GameObject ItemPrefab => _itemPrefab;
+    [Header("Info Block")]
+    [SerializeField] private Image _itemInfoImage;
+    [Space(5)]
+    [SerializeField] private Image _itemInfoValueImage;
+    [SerializeField] private TMP_Text _itemInfoValue_Text;
 
-    public GameObject ItemModel { get; set; }
-
-    private int _unlockCost;
-    [SerializeField] private TMP_Text _unlockCost_Text;
-    [SerializeField] private TMP_Text _equiped_Text;
-    
+    [Space(10)]
+    [Header("Price Block")]
+    [SerializeField] private TMP_Text _itemName_Text;
+    [Space(5)]
     [SerializeField] private Button _unlockButton;
-    [SerializeField] private Button _equipButton;
+
+    [Space(5)]
+    [Header("Cost")]
+    [SerializeField] private GameObject _costParent;
+    [Space(5)]
+    [SerializeField] private Image _costCurrencyImage;
+    [SerializeField] private TMP_Text _costCurrencyText;
+    private float _unlockCost;
+
+    [Space(5)]
+    [Header("Equipped")]
+    [SerializeField] private GameObject _equippedParent;
 
     [SerializeField] private ShopItemSounds _itemSounds; 
 
-    private ISkinsService _skinsService;
-    private IShopService _shopService;
     private IMetaResourcesService _metaResourcesService;
+    private ILevelService _levelService;
 
-    [HideInInspector] public bool isEquipped = false;
-    [HideInInspector] public bool isLocked = false;
+    private void OnEnable() => 
+        CacheServices();
 
-    public static event Action<ShopItem> OnShopItemEquipped;
-    //public static event Action<int> OnShopItemBuy;
-
-    private void OnEnable()
-    {
-        _skinsService = AllServices.Container.Single<ISkinsService>();
-        _shopService = AllServices.Container.Single<IShopService>();
-        _metaResourcesService = AllServices.Container.Single<IMetaResourcesService>();
-
-        _unlockButton.onClick.AddListener(Unlock);
-        _equipButton.onClick.AddListener(Equip);
-    }
-
-    private void OnDisable()
-    {
-        _unlockButton.onClick.RemoveAllListeners();
-        _equipButton.onClick.RemoveAllListeners();
-    }
-
-    public void InitSkinItem(ShopItemSkinData itemDataSO)
+    public void InitItemWithStaticData(ShopItemStaticData data)
     {
         try
         {
-            Type = itemDataSO.Type;
-            _itemImage.sprite = itemDataSO.Sprite;
-            _itemPrefab = itemDataSO.SkinPrefab;
-            _unlockCost = itemDataSO.UnlockCost;
-            _unlockCost_Text.text = _unlockCost.ToString();
-            isLocked = itemDataSO.IsLocked;
+            Type = data.Type;
 
-            UpdateState();
+            _itemInfoImage.sprite = data.itemSprite;
+
+            _itemInfoValueImage.sprite = data.valueImage;
+            _itemInfoValue_Text.text = $"x{data.valueAmount}";
+
+            if (_itemInfoValueImage.sprite == null)
+            {
+                _itemInfoValueImage.enabled = false;
+            }
+            if (data.valueAmount == 0)
+            {
+                _itemInfoValue_Text.enabled = false;
+            }
+
+
+            _itemName_Text.text = data.itemName;
+
+            _costCurrencyImage.sprite = data.costCurrencyImage;
+            if (_costCurrencyImage.sprite == null)
+            {
+                _costCurrencyImage.enabled = false;
+            }
+
+            _unlockCost = data.costAmount;
+            _costCurrencyText.text = $"{_unlockCost}";
+
+
+
+            NeedToUnlock = data.needToUnlock;
+            _unlocksOnLevel = data.unlocksOnLevel;
+            IsEquipped = false;
+
+            SwitchToBought(false);
         }
         catch (Exception e)
         {
@@ -68,93 +92,60 @@ public class ShopItem : MonoBehaviour
             Debug.Log(e.Message);
         }
     }
-   
-    public void Unequip()
+
+    public void BuyItem()
     {
-        if (!isLocked && isEquipped)
+        try
         {
-            // Unequip item
-            SwitchEquiped(false);
-        }
-    }
-
-    public void UpdateState()
-    {
-        _unlockButton.gameObject.SetActive(true);
-        _equiped_Text.gameObject.SetActive(false);
-
-        if (!isLocked)
-        {
-            _unlockButton.gameObject.SetActive(false);
-
-            if (isEquipped)
+            if (NeedToUnlock)
             {
-                SetCurrentSkin();
-                OnShopItemEquipped?.Invoke(this);
-
-                _equiped_Text.gameObject.SetActive(true);
-            }
-
-            return;
-        }
-    }
-
-    private void Unlock()
-    {
-        if (isLocked)
-        {
-            // if player enough money
-            
-            int money = _metaResourcesService.PlayerMoney;
-            if(money >= _unlockCost)
-            {
-                // Deduct player money
-                _metaResourcesService.PlayerMoney -= _unlockCost;
-
-                // Send callback for PlayerMoney to updte money counter
-                //money -= _unlockCost;
-                //OnShopItemBuy?.Invoke(money);
-
-                // Unlock item
-                isLocked = false;
-                _unlockButton.gameObject.SetActive(false);
-
-                // Play unlock sound
-                _itemSounds.PlayUnlockSound();
-
-                return;
-            }
-        }
-
-        Debug.Log("Not enough money");
-    }
-
-    private void Equip()
-    {
-        if (!isLocked)
-        {
-            if (Type == ShopItemType.Skin)
-            {
-                if (!isEquipped)
+                if (CurrentLevelLowerThenRequired())
                 {
-                    // Set item as currently equipped
-                    SetCurrentSkin();
-
-                    _itemSounds.PlayEquipSound();
-
-                    // Send event OnItemEquip? To Unequip currently equipped item
-                    OnShopItemEquipped?.Invoke(this);
-
-                    SwitchEquiped(true);
-                    UpdateState();
+                    Debug.Log($"Item is locked. Need to complete level {_unlocksOnLevel}. Currently completed level is {_levelService.CurrentLevelBuildIndex}");
+                    return;
                 }
             }
+
+            float money = _metaResourcesService.PlayerMoney;
+
+            if (money < _unlockCost)
+            {
+                Debug.Log("Not enough money");
+                return;
+            }
+
+            BuyAndMarkAsOwned();
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(e.Message);
         }
     }
 
-    private void SetCurrentSkin() => 
-        _skinsService.SetCurrentSkinPrefab(_itemPrefab);
+    private void BuyAndMarkAsOwned()
+    {
+        DeductCostFromPlayerMoney();
+        SwitchToBought(true);
+        DisableBuyButton();
+    }
+   
+    private void DeductCostFromPlayerMoney() => 
+        _metaResourcesService.PlayerMoney -= _unlockCost;
+    private void SwitchToBought(bool bought)
+    {
+        _costParent.SetActive(!bought);
+        _equippedParent.SetActive(bought);
+    }
+    private void DisableBuyButton() =>
+       _unlockButton.interactable = false;
 
-    private void SwitchEquiped(bool isEquiped) =>
-        isEquipped = isEquiped;
+    private void CacheServices()
+    {
+        _metaResourcesService = AllServices.Container.Single<IMetaResourcesService>();
+        _levelService = AllServices.Container.Single<ILevelService>();
+    }
+
+    private bool CurrentLevelLowerThenRequired() =>
+       _levelService.CurrentLevelBuildIndex < _unlocksOnLevel - 1;
 }

@@ -57,7 +57,7 @@ public class LoadProgressState : IState
             defaultStreakReward: defaultStreakReward,
             defaultMaxStreak: defaultMaxStreak,
             sefaultStreakCooldown: defaultClaimCooldown,
-            initialLevel: Constants.NEW_PROGRESS_FIRST_LEVEL_SCENE_NAME, 
+            initialLevelBuildIndex: Constants.FIRST_LEVEL_SCENE_BUILD_INDEX, 
             _skinService.DefaultSkinPrefab);
     }
 }

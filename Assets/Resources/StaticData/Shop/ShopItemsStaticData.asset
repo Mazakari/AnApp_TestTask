@@ -9,10 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd894e1e059e6f4e870e8448573ed2e, type: 3}
+  m_Script: {fileID: 11500000, guid: e9ec4b0d9e32d1440a5c409d6a00c399, type: 3}
   m_Name: ShopItemsStaticData
   m_EditorClassIdentifier: 
-  _skinsData:
-  - {fileID: 11400000, guid: 8bc5a07a9758d1b4bb7eb4ec9cbac918, type: 2}
-  - {fileID: 11400000, guid: dace059c48a258a439e7405c199d3034, type: 2}
-  - {fileID: 11400000, guid: 82b050917f935df469014e18e75b8aa7, type: 2}
+  TicketsData:
+  - {fileID: 11400000, guid: 2e026591f4f2e314196c1f70efa60038, type: 2}
+  - {fileID: 11400000, guid: f74cef322865dcc4e8a7ac1ddd8d3802, type: 2}
+  SkinsData:
+  - {fileID: 11400000, guid: 8490c175990f10c43950d5990ee56991, type: 2}
+  - {fileID: 11400000, guid: 207eddc0506d82a4c9bda2339567008a, type: 2}
+  LevelsData:
+  - {fileID: 11400000, guid: 5e298daa9897f134c8d3d9423a99a60b, type: 2}
+  - {fileID: 11400000, guid: 5cf1d59ebbfed4347a40687927aea689, type: 2}
+  - {fileID: 11400000, guid: ae74c8c88dcf7144ca6df220c0cbbc44, type: 2}

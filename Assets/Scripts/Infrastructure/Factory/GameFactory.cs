@@ -20,7 +20,7 @@ public class GameFactory : IGameFactory
     public GameObject CreateShopItem(Transform parent) =>
      InstantiateRegistered(AssetPath.SHOP_ITEM_PREFAB_PATH, parent);
 
-    public ShopItemsStaticData GetShopData() => 
+    public ShopStaticData GetShopData() => 
         GetShopStaticData(AssetPath.SHOP_ITEMS_STATIC_DATA_PATH);
     #endregion
 
@@ -81,9 +81,9 @@ public class GameFactory : IGameFactory
 
 
     #region STATIC DATA
-    private ShopItemsStaticData GetShopStaticData(string path)
+    private ShopStaticData GetShopStaticData(string path)
     {
-        ShopItemsStaticData data = _assets.GetShopItemsData(path);
+        ShopStaticData data = _assets.GetShopItemsData(path);
         return data;
     }
 

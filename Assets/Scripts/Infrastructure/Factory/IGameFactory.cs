@@ -13,7 +13,7 @@ public interface IGameFactory : IService
     GameObject CreateShopItem(Transform parent);
     void CreateShopHud();
     GameObject SpawnPlayerSkin(GameObject prefab, Vector2 at);
-    ShopItemsStaticData GetShopData();
+    ShopStaticData GetShopData();
     LevelsStaticData GetLevelsData();
     DailyBonusStaticData GetDailyBonusData();
     GameObject CreateDailyBonusCell();

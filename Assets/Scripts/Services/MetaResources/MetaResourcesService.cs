@@ -2,15 +2,16 @@
 
 public class MetaResourcesService : IMetaResourcesService
 {
-    public static event Action<int> OnMoneyValueChange;
+    public static event Action<float> OnMoneyValueChange;
 
     private readonly ISaveLoadService _saveLoadService;
 
     public MetaResourcesService(ISaveLoadService saveLoadService) => 
         _saveLoadService = saveLoadService;
 
-    private int _playerMoney;
-    public int PlayerMoney{ 
+    private float _playerMoney;
+    public float PlayerMoney
+    { 
         get => _playerMoney;
 
         set

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LoadShopState : IPayloadedState<string>
 {
@@ -7,7 +6,7 @@ public class LoadShopState : IPayloadedState<string>
     private readonly SceneLoader _sceneLoader;
     private readonly IGameFactory _gameFactory;
     private readonly IShopService _shopService;
-    private IPersistentProgressService _progressService;
+    private readonly IPersistentProgressService _progressService;
     private readonly LoadingCurtain _curtain;
 
     public LoadShopState(
@@ -40,14 +39,15 @@ public class LoadShopState : IPayloadedState<string>
     private void OnLoaded()
     {
         InitShopCanvas();
-       
-        SpawnShopItems();
-
-        InitShopTabs();
-
         InformProgressReaders();
 
         _gameStateMachine.Enter<ShopState>();
+    }
+
+    private void InitShopCanvas()
+    {
+        _gameFactory.CreateShopHud();
+        _shopService.InitShopItems();
     }
 
     private void InformProgressReaders()
@@ -57,65 +57,4 @@ public class LoadShopState : IPayloadedState<string>
             progressReader.LoadProgress(_progressService.Progress);
         }
     }
-
-    private void SpawnShopItems()
-    {
-        Transform skinsParent = GameObject.FindGameObjectWithTag(Constants.SKINS_TAB_TAG).GetComponent<ShopTab>().Content.transform;
-
-        SpawnItem(skinsParent, _shopService.ShopItemDataSOList.SkinsData, _shopService.SkinItems);
-    }
-
-    private void SpawnItem(Transform parent, List<ShopItemSkinData> itemsDataList, List<ShopItem> shopItemsCollection)
-    {
-        shopItemsCollection.Clear();
-
-        ShopItem item;
-        ShopItemSkinData itemData;
-
-        for (int i = 0; i < itemsDataList.Count; i++)
-        {
-            itemData = itemsDataList[i];
-            item = _gameFactory.CreateShopItem(parent).GetComponent<ShopItem>();
-
-            item.InitSkinItem(itemData);
-
-            shopItemsCollection.Add(item);
-        }
-    }
-
-    private void InitShopCanvas() =>
-        _gameFactory.CreateShopHud();
-
-    private void InitShopTabs()
-    {
-        ShopTab skinsTab = GameObject.FindGameObjectWithTag(Constants.SKINS_TAB_TAG).GetComponent<ShopTab>();
-
-        Transform shopModelsViewParent = GameObject.FindGameObjectWithTag(Constants.SHOP_ITEM_VIEW_POINT_TAG).transform;
-        SetSkinsToViewPoint(shopModelsViewParent, _shopService.SkinItems);
-
-        skinsTab.Show();
-    }
-
-    private void SetSkinsToViewPoint(Transform parent, List<ShopItem> shopItemsCollection)
-    {
-        for (int i = 0; i < shopItemsCollection.Count; i++)
-        {
-            SetModelTransform(parent, shopItemsCollection[i]);
-        }
-    }
-
-    private void SetModelTransform(Transform parent, ShopItem item)
-    {
-        SetItemModelParent(parent, item);
-        ResetItemModelPosition(item);
-        IncreaseItemModelLocalScale(item);
-    }
-    private void SetItemModelParent(Transform parent, ShopItem item) => 
-        item.ItemModel.transform.SetParent(parent);
-
-    private void ResetItemModelPosition(ShopItem item) => 
-        item.ItemModel.transform.localPosition = Vector3.zero;
-
-    private void IncreaseItemModelLocalScale(ShopItem item) => 
-        item.ItemModel.transform.localScale = Vector3.one * 10f;
 }

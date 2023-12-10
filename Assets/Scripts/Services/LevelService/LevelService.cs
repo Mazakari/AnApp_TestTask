@@ -5,6 +5,8 @@ public partial class LevelService : ILevelService
     private LevelCell[] _levels;
     public LevelCell[] Levels => _levels;
 
+    public int CurrentLevelBuildIndex { get; private set; }
+
     private LevelCellData[] _levelsData;
 
     private int _levelsCount;
@@ -23,6 +25,7 @@ public partial class LevelService : ILevelService
 
     public void InitService(PlayerProgress progress)
     {
+        CurrentLevelBuildIndex = progress.gameData.currentLevelBuildIndex;
         _levelsStaticData = _gameFactory.GetLevelsData();
         _levelsCount = _sceneLoader.GetLevelsCount();
 
@@ -38,9 +41,12 @@ public partial class LevelService : ILevelService
     {
         try
         {
+            LevelCell level = GetCellByName(currentLevelName);
+            CurrentLevelBuildIndex = level.LevelNumber - 1;
+
             string nextLevelName = _sceneLoader.GetNextLevelName(currentLevelName);
-            LevelCell nextLevel = GetCellByName(nextLevelName);
-            nextLevel.UnlockLevel();
+            level = GetCellByName(nextLevelName);
+            level.UnlockLevel();
 
             UnlockNextLevelData(nextLevelName);
         }
@@ -59,6 +65,8 @@ public partial class LevelService : ILevelService
         {
             progress.gameData.levels.Add(_levelsData[i]);
         }
+
+        progress.gameData.currentLevelBuildIndex = CurrentLevelBuildIndex;
     }
 
     private LevelCell GetCellByName(string name)
@@ -130,8 +138,6 @@ public partial class LevelService : ILevelService
             Debug.Log(e.Message);
         }
     }
-
-
     private void InitLevelCells()
     {
         string name;
@@ -155,7 +161,6 @@ public partial class LevelService : ILevelService
             Debug.Log(e.Message);
         }
     }
-
     private void UnlockNextLevelData(string nextLevelName)
     {
         try
