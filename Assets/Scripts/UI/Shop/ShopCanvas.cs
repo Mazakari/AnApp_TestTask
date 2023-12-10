@@ -7,10 +7,8 @@ public class ShopCanvas : MonoBehaviour
 
     private ISaveLoadService _saveLoadService;
 
-    private void OnEnable()
-    {
+    private void OnEnable() => 
         CacheServices();
-    }
 
     public void LoadMainMenu()
     {

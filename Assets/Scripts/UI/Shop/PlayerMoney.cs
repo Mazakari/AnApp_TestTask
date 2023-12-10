@@ -20,7 +20,7 @@ public class PlayerMoney : MonoBehaviour, ISavedProgress
         UnsubscribeUICallbacks();
 
     public void UpdateCounter(float newMoneyValue) => 
-        _moneyCounter.text = newMoneyValue.ToString();
+        _moneyCounter.text = newMoneyValue.ToString("f0");
 
     public void UpdateProgress(PlayerProgress progress)
     {

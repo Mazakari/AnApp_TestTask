@@ -6,6 +6,10 @@ public class ShopItemStaticData : ScriptableObject
     public ShopItemType Type;
 
     [Space(10)]
+    [Header("IAP Purchase")]
+    public bool iAPItem = false;
+
+    [Space(10)]
     [Header("Unlock Requirements")]
     public bool needToUnlock = false;
     public int unlocksOnLevel = 0;

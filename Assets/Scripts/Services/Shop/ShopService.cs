@@ -13,12 +13,10 @@ public class ShopService : IShopService
 
 
     private readonly IGameFactory _gameFactory;
-    private readonly ILevelService _levelService;
 
-    public ShopService(IGameFactory gameFactory, ILevelService levelService)
+    public ShopService(IGameFactory gameFactory)
     {
         _gameFactory = gameFactory;
-        _levelService = levelService;
 
         CacheShopStaticData();
     }

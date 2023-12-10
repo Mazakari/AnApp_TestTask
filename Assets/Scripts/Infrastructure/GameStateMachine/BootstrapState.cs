@@ -42,7 +42,7 @@ public class BootstrapState : IState
             _services.Single<IGameFactory>()));
         _services.RegisterSingle<ILevelService>(new LevelService(_services.Single<IGameFactory>(), _sceneLoader));
         _services.RegisterSingle<IMetaResourcesService>(new MetaResourcesService(_services.Single<ISaveLoadService>()));
-        _services.RegisterSingle<IShopService>(new ShopService(_services.Single<IGameFactory>(), _services.Single<ILevelService>()));
+        _services.RegisterSingle<IShopService>(new ShopService(_services.Single<IGameFactory>()));
         _services.RegisterSingle<ISkinsService>(new SkinsService());
         _services.RegisterSingle<IDailyBonusService>(new DailyBonusService(
             _services.Single<IGameFactory>(), 

@@ -190,7 +190,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -600}
+  m_AnchoredPosition: {x: 0, y: -300}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &5902761374710983237
@@ -914,11 +914,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2192727703863872047, guid: 5d45a5fb1016e6749b5c8d5ebc496161, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7696536267646421956, guid: 5d45a5fb1016e6749b5c8d5ebc496161, type: 3}
       propertyPath: m_Name
       value: DailyBonusView_Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7696536267646421956, guid: 5d45a5fb1016e6749b5c8d5ebc496161, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8175079503104476594, guid: 5d45a5fb1016e6749b5c8d5ebc496161, type: 3}
       propertyPath: m_Pivot.x
@@ -1671,7 +1675,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2061120282533242635, guid: c2377ec375472f04f8ea3ba51c019a51, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3887200343429563946, guid: c2377ec375472f04f8ea3ba51c019a51, type: 3}
       propertyPath: m_Pivot.x
